@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class ScreenShake : MonoBehaviour
 {
+    public static ScreenShake instance;
+
     [SerializeField] float shakeMagnitude;
     [SerializeField] float shakeDuration;
 
@@ -11,6 +13,14 @@ public class ScreenShake : MonoBehaviour
 
     private Vector3 startPos;
     private Vector2 offset;
+
+    private void Awake()
+    {
+        if (instance != null && instance != this)
+            Destroy(this);
+        if (instance == null)
+            instance = this;
+    }
 
     private void Start()
     {
@@ -21,7 +31,7 @@ public class ScreenShake : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.G))
         {
-            StartCoroutine(Shake(shakeDuration));
+            StartCoroutine(Shake(shakeDuration, shakeMagnitude));
         }
 
         if (Input.GetKey(KeyCode.Space))
@@ -42,7 +52,7 @@ public class ScreenShake : MonoBehaviour
         transform.position = new Vector3(x, y, startPos.z);
     }
 
-    IEnumerator Shake(float duration)
+    public IEnumerator Shake(float duration, float magnitude)
     {
         float elapsedTime = 0;
 
@@ -51,8 +61,8 @@ public class ScreenShake : MonoBehaviour
             elapsedTime += Time.deltaTime;
             float strength = curve.Evaluate(elapsedTime / duration);
 
-            float x = Random.Range(0.0f, 1.0f) * strength * shakeMagnitude;
-            float y = Random.Range(0.0f, 1.0f) * strength * shakeMagnitude;
+            float x = Random.Range(0.0f, 1.0f) * strength * magnitude;
+            float y = Random.Range(0.0f, 1.0f) * strength * magnitude;
 
             transform.position = new Vector3(x, y, startPos.z);
 

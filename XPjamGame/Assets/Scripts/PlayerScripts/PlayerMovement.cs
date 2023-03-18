@@ -15,65 +15,82 @@ public class PlayerMovement : MonoBehaviour
     private Rigidbody2D rb;
 
     private Vector2 moveDir;
-    private Vector2 dashDir;
+    private Vector2 attackDir;
 
-
-    private bool isDashing = false;
+    public bool isAttacking = false;
+    public bool isDashing = false;
     private bool canDash = true;
 
 
     private float xInput;
     private float yInput;
 
+    private float elapsedTime;
+
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
+        rb.gravityScale = 0;
     }
 
     private void Update()
     {
-        if (isDashing) return;
-        RotatePlayer();
-
+        if (isDashing || isAttacking) return;
+        
         xInput = Input.GetAxis("Horizontal");
         yInput = Input.GetAxis("Vertical");
 
         moveDir = new Vector2(xInput, yInput);
         moveDir = moveDir.normalized;
 
+        if(rb.velocity.magnitude >= 0.1f)
+        {
+            RotatePlayer(moveDir);
+        }
+        
         if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
         {
             StartCoroutine(Dash());
         }
     }
 
-    private void RotatePlayer()
+    public void RotatePlayer(Vector2 dir)
     {
-        dashDir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
-
-        dashDir = dashDir.normalized;
-
-        float zRotation = Mathf.Atan2(dashDir.y, dashDir.x) * Mathf.Rad2Deg;
+        float zRotation = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
         transform.rotation = Quaternion.Euler(0, 0, zRotation);
+    }
+
+    public void SetAttacking(bool attacking)
+    {
+        isAttacking = attacking;
     }
 
     private void FixedUpdate()
     {
         if (isDashing) return;
 
-        rb.velocity = moveDir * speed;
+        if (isAttacking)
+        {
+            rb.velocity = moveDir * speed * 0.5f;
+        }
+        else
+        {
+            rb.velocity = moveDir * speed;
+        }
+        
     }
 
     IEnumerator Dash()
     {
         isDashing = true;
         canDash = false;
-        rb.velocity = dashDir * dashForce;
+        elapsedTime += Time.deltaTime;
+        rb.velocity = moveDir * dashForce;
         yield return new WaitForSeconds(dashDuration);
-        rb.velocity = Vector2.zero;
         isDashing = false;
         yield return new WaitForSeconds(dashCooldown);
         canDash = true;
+        elapsedTime = 0;
     }
 }

@@ -4,59 +4,67 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
-    [SerializeField] private Transform SwordAnchor;
+    [SerializeField] private GameObject SwordAnchor;
 
     [SerializeField] private float slashDuration;
     [SerializeField] private float slashSpeed;
+    [SerializeField] private float slashCooldown;
+
+    public int damage;
+
+    private PlayerMovement pm;
 
     private bool slashing = false;
     private bool canSlash = true;
 
     private Vector3 startRotation;
-    
+    private Vector2 attackDir;
+
+    private void Start()
+    {
+        SwordAnchor.SetActive(false);
+        pm = GetComponent<PlayerMovement>();
+        startRotation = SwordAnchor.transform.localEulerAngles;
+        Debug.Log(startRotation);
+    }
+
     private void Update()
     {
+        if (pm.isDashing) return;
+
         if (Input.GetMouseButtonDown(0) && canSlash)
         {
             //slashing = true;
             StartCoroutine(SwingSwordCo());
-            canSlash = false;
 
-            startRotation = SwordAnchor.localEulerAngles;
         }
-
-        //if (slashing)
-        //{
-            
-        //    if (SwordAnchor.rotation.eulerAngles.z >= -40)
-        //    {
-        //        SwordAnchor.Rotate(Vector3.forward * (slashSpeed * Time.deltaTime) * -1);
-        //    }       
-        //}
     }
 
     private IEnumerator SwingSwordCo()
     {
+        canSlash = false;
+        pm.SetAttacking(true);
+        SwordAnchor.SetActive(true);
+
+        attackDir = Camera.main.ScreenToWorldPoint(Input.mousePosition) - transform.position;
+
+        attackDir = attackDir.normalized;
+
+        pm.RotatePlayer(attackDir);
+
         float swung = 0f;
         while (swung < 80f)
         {
-            SwordAnchor.Rotate(Vector3.forward * (slashSpeed * Time.deltaTime) * -1);
+            SwordAnchor.transform.Rotate(Vector3.forward * (slashSpeed * Time.deltaTime) * -1);
             swung += slashSpeed * Time.deltaTime;
             yield return null;
         }
-        //reset sword
-        SwordAnchor.localRotation = Quaternion.Euler(startRotation);
+
+        SwordAnchor.transform.localRotation = Quaternion.Euler(startRotation);
+        SwordAnchor.SetActive(false);
+        yield return new WaitForSeconds(slashDuration);
+        pm.SetAttacking(false);
+        yield return new WaitForSeconds(slashCooldown);
         canSlash = true;
     }
-
-/*    IEnumerator SwingSword()
-    {
-        while(totalAmountRotated <= 80)
-        {
-            totalAmountRotated += 1;
-            SwordAnchor.rotation = Quaternion.Euler(0, 0, startZRotation - totalAmountRotated);
-
-            yield return null;
-        }
-    }*/
 }
