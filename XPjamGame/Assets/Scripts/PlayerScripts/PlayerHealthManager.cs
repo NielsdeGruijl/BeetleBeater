@@ -24,8 +24,12 @@ public class PlayerHealthManager : MonoBehaviour
         health -= damage;
         Debug.Log($"PlayerHP: {health} / {maxHP}");
 
+        AudioManager.manager.PlayAudio("PlayerHit");
+        StartCoroutine(ScreenShake.instance.Shake(0.5f, 1.5f));
+
         if(health <= 0)
         {
+            health = 0;
             Die();
         }
 

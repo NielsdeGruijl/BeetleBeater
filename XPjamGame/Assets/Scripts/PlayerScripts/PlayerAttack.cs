@@ -4,8 +4,10 @@ using UnityEngine;
 
 public class PlayerAttack : MonoBehaviour
 {
+    [SerializeField] private GameObject swordParent;
     [SerializeField] private GameObject SwordAnchor;
 
+    [SerializeField] private int slashStaminaCost;
     [SerializeField] private float slashDuration;
     [SerializeField] private float slashSpeed;
     [SerializeField] private float slashCooldown;
@@ -13,6 +15,7 @@ public class PlayerAttack : MonoBehaviour
     public int damage;
 
     private PlayerMovement pm;
+    private PlayerStaminaManager staminaManager;
 
     private bool slashing = false;
     private bool canSlash = true;
@@ -24,6 +27,8 @@ public class PlayerAttack : MonoBehaviour
     {
         SwordAnchor.SetActive(false);
         pm = GetComponent<PlayerMovement>();
+        staminaManager = GetComponent<PlayerStaminaManager>();
+
         startRotation = SwordAnchor.transform.localEulerAngles;
     }
 
@@ -31,13 +36,20 @@ public class PlayerAttack : MonoBehaviour
     {
         if (pm.isDashing) return;
 
-        if (Input.GetMouseButtonDown(0) && canSlash)
+        if (Input.GetMouseButtonDown(0) && canSlash && staminaManager.stamina >= slashStaminaCost)
         {
             //slashing = true;
             StartCoroutine(SwingSwordCo());
-
+            
         }
     }
+
+    public void RotateSword(Transform target, Vector2 dir)
+    {
+        float rotation = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
+        target.Rotate(0, 0, rotation);
+    }
+
 
     private IEnumerator SwingSwordCo()
     {
@@ -49,7 +61,16 @@ public class PlayerAttack : MonoBehaviour
 
         attackDir = attackDir.normalized;
 
-        pm.RotatePlayer(attackDir);
+        RotateSword(swordParent.transform, attackDir);
+        
+        if(attackDir.x > 0)
+        {
+            pm.FlipPlayer(false);
+        }
+        if(attackDir.x < 0)
+        {
+            pm.FlipPlayer(true);
+        }
 
         float swung = 0f;
         while (swung < 80f)
@@ -60,7 +81,9 @@ public class PlayerAttack : MonoBehaviour
         }
 
         SwordAnchor.transform.localRotation = Quaternion.Euler(startRotation);
+        swordParent.transform.rotation = Quaternion.identity;
         SwordAnchor.SetActive(false);
+        staminaManager.UseStamina(slashStaminaCost);
         yield return new WaitForSeconds(slashDuration);
         pm.SetAttacking(false);
         yield return new WaitForSeconds(slashCooldown);

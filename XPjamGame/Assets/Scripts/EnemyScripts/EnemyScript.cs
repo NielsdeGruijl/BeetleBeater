@@ -8,7 +8,14 @@ public class EnemyScript : MonoBehaviour
     [SerializeField] private EnemyHealthManager healthManager;
 
     [SerializeField] private Collider2D col;
-    
+
+    [SerializeField] private ParticleSystem slamParticles;
+
+    [Header("sprites")]
+    [SerializeField] private Sprite defaultSprite;
+    [SerializeField] private Sprite slamSprite;
+    [SerializeField] private Sprite chargeSprite;
+
     [Header("Base stats")]
     [SerializeField] private float moveSpeed;
     [SerializeField] private float keepDistance;
@@ -17,10 +24,11 @@ public class EnemyScript : MonoBehaviour
 
     [Header("Ground slam")]
     [SerializeField] private AnimationCurve JumpCurve;
-    [SerializeField] private Collider2D shockWave;
+    [SerializeField] private CircleCollider2D shockWave;
 
     [Header("Ground slam variables")]
     [SerializeField] private float shockWaveDuration;
+    [SerializeField] private float shockWaveSize;
     [SerializeField] private float slamCooldown;
     [SerializeField] private float slamRange;
     [SerializeField] private float jumpDuration;
@@ -59,6 +67,8 @@ public class EnemyScript : MonoBehaviour
         sr = GetComponentInChildren<SpriteRenderer>();
         player = GameObject.FindGameObjectWithTag("Player");
 
+        shockWave.radius = shockWaveSize * 2;
+
         StartCoroutine(attackCooldown());
     }
 
@@ -91,10 +101,12 @@ public class EnemyScript : MonoBehaviour
             Debug.Log(playerDist);
             if (playerDist <= slamRange)
             {
+                sr.sprite = slamSprite;
                 StartCoroutine(GroundSlam());
             }
             else
             {
+                sr.sprite = chargeSprite;
                 totalCharges = 2;
                 StartCoroutine(Charge(windUpDuration));
             }
@@ -110,7 +122,7 @@ public class EnemyScript : MonoBehaviour
 
     private IEnumerator GroundSlam()
     {
-        sr.color = Color.blue;
+        //sr.color = Color.blue;
         canAttack = false;
         canSlam = false;
         col.enabled = false;
@@ -126,12 +138,16 @@ public class EnemyScript : MonoBehaviour
 
             yield return null;
         }
-        StartCoroutine(ScreenShake.instance.Shake(1, 1));
+        StartCoroutine(ScreenShake.instance.Shake(1, 1.5f));
+        AudioManager.manager.PlayAudio("Slam");
+        slamParticles.Play();
         col.enabled = true;
         shockWave.enabled = true;
-        sr.color = Color.red;
+        //sr.color = Color.red;
         yield return new WaitForSeconds(shockWaveDuration);
         shockWave.enabled = false;
+
+        sr.sprite = defaultSprite;
 
         yield return new WaitForSeconds(slamCooldown);
         canSlam = true;
@@ -140,7 +156,7 @@ public class EnemyScript : MonoBehaviour
 
     private IEnumerator Charge(float windup)
     {
-        sr.color = Color.green;
+        //sr.color = Color.green;
         canAttack = false;
         isCharging = true;
         rb.velocity = Vector2.zero;
@@ -169,7 +185,7 @@ public class EnemyScript : MonoBehaviour
     {
         rb.velocity = Vector2.zero;
         chargeDirSet = false;
-        sr.color = Color.red;
+        //sr.color = Color.red;
         yield return new WaitForSeconds(chargeCooldown);
         isCharging = false;
         StartCoroutine(attackCooldown());
@@ -217,6 +233,7 @@ public class EnemyScript : MonoBehaviour
                 }
                 else
                 {
+                    sr.sprite = defaultSprite;
                     StartCoroutine(ChargeCooldown());
                 }
                 
@@ -226,8 +243,9 @@ public class EnemyScript : MonoBehaviour
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.collider.CompareTag("Player"))
+        if (collision.collider.CompareTag("Player") && isCharging)
         {
+            sr.sprite = defaultSprite;
             collision.collider.GetComponent<PlayerHealthManager>().TakeDamage(chargeDamage);
             StartCoroutine(ChargeCooldown());
         }

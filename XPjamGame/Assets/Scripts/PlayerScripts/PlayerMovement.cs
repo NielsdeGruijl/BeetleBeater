@@ -1,18 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class PlayerMovement : MonoBehaviour
 {
-    [SerializeField] float speed;
+    [SerializeField] private SpriteRenderer sprite;
+    [SerializeField] private float speed;
 
     [Header("Dash Variables")]
-    [SerializeField] float dashForce;
+    [SerializeField] private float dashForce;
+    [SerializeField] private int dashStaminaCost;
     [SerializeField] private float dashDuration;
     [SerializeField] private float dashCooldown;
 
     private Rigidbody2D rb;
+    private PlayerStaminaManager staminaManager;
+
 
     private Vector2 moveDir;
     private Vector2 attackDir;
@@ -32,6 +37,10 @@ public class PlayerMovement : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         rb.gravityScale = 0;
+
+        staminaManager = GetComponent<PlayerStaminaManager>();
+
+        AudioManager.manager.PlayAudio("Music");
     }
 
     private void Update()
@@ -44,21 +53,34 @@ public class PlayerMovement : MonoBehaviour
         moveDir = new Vector2(xInput, yInput);
         moveDir = moveDir.normalized;
 
-        if(rb.velocity.magnitude >= 0.1f)
+/*        if(rb.velocity.magnitude >= 0.1f)
         {
             RotatePlayer(moveDir);
+        }*/
+
+        if(moveDir.x < 0)
+        {
+            FlipPlayer(true);
+        }
+        if(moveDir.x > 0)
+        {
+            FlipPlayer(false);
         }
         
-        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash)
+        if (Input.GetKeyDown(KeyCode.LeftShift) && canDash && staminaManager.stamina >= dashStaminaCost)
         {
             StartCoroutine(Dash());
         }
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            SceneManager.LoadScene(0);
+        }
     }
 
-    public void RotatePlayer(Vector2 dir)
+    public void FlipPlayer(bool flip)
     {
-        float zRotation = Mathf.Atan2(dir.y, dir.x) * Mathf.Rad2Deg;
-        transform.rotation = Quaternion.Euler(0, 0, zRotation);
+        sprite.flipX = flip;
     }
 
     public void SetAttacking(bool attacking)
@@ -87,6 +109,7 @@ public class PlayerMovement : MonoBehaviour
         canDash = false;
         elapsedTime += Time.deltaTime;
         rb.velocity = moveDir * dashForce;
+        staminaManager.UseStamina(dashStaminaCost);
         yield return new WaitForSeconds(dashDuration);
         isDashing = false;
         yield return new WaitForSeconds(dashCooldown);

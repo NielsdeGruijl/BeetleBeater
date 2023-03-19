@@ -18,6 +18,8 @@ public class EnemyHealthManager : MonoBehaviour
     {
         health -= damage;
 
+        AudioManager.manager.PlayAudio("EnemyHit");
+
         if (health <= 0)
         {
             Die();

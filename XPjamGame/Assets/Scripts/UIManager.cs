@@ -9,9 +9,11 @@ public class UIManager : MonoBehaviour
 
     [SerializeField] private RectTransform healthBar;
     [SerializeField] private RectTransform bossHealthBar;
+    [SerializeField] private RectTransform playerStamBar;
 
     float healthWidth;
     float bossHealthWidth;
+    float playerStamWidth;
 
     private void Awake()
     {
@@ -22,6 +24,7 @@ public class UIManager : MonoBehaviour
 
         healthWidth = healthBar.transform.localScale.x;
         bossHealthWidth = bossHealthBar.transform.localScale.x;
+        playerStamWidth = playerStamBar.transform.localScale.x;
     }
 
     public void AdjustHealthBar(int health, int maxHealth)
@@ -36,5 +39,12 @@ public class UIManager : MonoBehaviour
         float healthBarChunk = bossHealthWidth / maxHealth;
 
         bossHealthBar.transform.localScale = new Vector3(healthBarChunk * health, bossHealthBar.transform.localScale.y, bossHealthBar.transform.localScale.z);
+    }
+
+    public void AdjustStamBar(float stamina, float maxStamina)
+    {
+        float stamBarChunk = playerStamWidth / maxStamina;
+
+        playerStamBar.transform.localScale = new Vector3(stamBarChunk * stamina, playerStamBar.transform.localScale.y, playerStamBar.transform.localScale.z);
     }
 }
