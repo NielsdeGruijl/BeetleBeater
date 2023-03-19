@@ -25,7 +25,6 @@ public class PlayerAttack : MonoBehaviour
         SwordAnchor.SetActive(false);
         pm = GetComponent<PlayerMovement>();
         startRotation = SwordAnchor.transform.localEulerAngles;
-        Debug.Log(startRotation);
     }
 
     private void Update()

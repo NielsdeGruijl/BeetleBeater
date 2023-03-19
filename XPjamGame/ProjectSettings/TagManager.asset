@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Sword
   - ShockWave
+  - Border
   layers:
   - Default
   - TransparentFX
