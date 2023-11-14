@@ -13,7 +13,7 @@ D - move right
 Shift - dash  
 Mouse1 - attack  
 
-[Gameplay Video](https://youtu.be/0GN4e6q5IU4)
+![Gameplay Video](https://youtu.be/0GN4e6q5IU4)
 
 ![Main Menu Image](ScreenShots/MainMenu.png?raw=true)
 
