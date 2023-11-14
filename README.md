@@ -13,7 +13,7 @@ D - move right
 Shift - dash  
 Mouse1 - attack  
 
-![Gameplay Video](https://youtu.be/0GN4e6q5IU4)
+[Gameplay Video](https://youtu.be/0GN4e6q5IU4)
 
 ![Main Menu Image](ScreenShots/MainMenu.png?raw=true)
 
@@ -21,4 +21,4 @@ Mouse1 - attack
 
 ![Win Screen Image](ScreenShots/WinScreen.png?raw=true)
 
-Background music: ![Boss Time by David Renda](https://www.fesliyanstudios.com/royalty-free-music/download/boss-time/2340)
+Background music: [Boss Time by David Renda](https://www.fesliyanstudios.com/royalty-free-music/download/boss-time/2340)
