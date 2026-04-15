@@ -9,10 +9,8 @@ The game can be played through your browser on [itch.io](https://bigmonke778.itc
   <img src="ScreenShots/VideoThumbnail.png"/>
 </a>
 
-![Main Menu Image](ScreenShots/MainMenu.png)
-
-![Gameplay Image](ScreenShots/GamePlay2.png?raw=true)
-
-![Win Screen Image](ScreenShots/WinScreen.png?raw=true)
+<img width="50%" src="ScreenShots/MainMenu.png"/>
+<img width="50%" src="ScreenShots/GamePlay2.png"/>
+<img width="50%" src="ScreenShots/WinScreen.png"/>
 
 Background music: [Boss Time by David Renda](https://www.fesliyanstudios.com/royalty-free-music/download/boss-time/2340)
