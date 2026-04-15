@@ -5,12 +5,17 @@ Beetle Beater is a souls-like boss fight where the goal of the player is to defe
 
 The game can be played through your browser on [itch.io](https://bigmonke778.itch.io/beetle-beater).
 
+### Gameplay video
 <a href="https://youtu.be/0GN4e6q5IU4">
   <img src="ScreenShots/VideoThumbnail.png"/>
 </a>
 
+### Screenshots
+
 <img align="left" style="padding-right:5px" width="40%" src="ScreenShots/MainMenu.png">
 <img align="left" style="padding-right:5px" width="40%" src="ScreenShots/GamePlay2.png">
 <img align="left" style="padding-right:5px" width="40%" src="ScreenShots/WinScreen.png">
+
+<br/><br/><br/><br/><br/>
 
 Background music: [Boss Time by David Renda](https://www.fesliyanstudios.com/royalty-free-music/download/boss-time/2340)
