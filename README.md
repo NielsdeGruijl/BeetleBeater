@@ -14,10 +14,10 @@ Shift - dash
 Mouse1 - attack  
 
 <a href="https://youtu.be/0GN4e6q5IU4">
-  <img src="ScreenShots/MainMenu.png"/>
+  <img src="ScreenShots/VideoThumbnail.png"/>
 </a>
 
-![Main Menu Image]()
+![Main Menu Image](ScreenShots/MainMenu.png)
 
 ![Gameplay Image](ScreenShots/GamePlay2.png?raw=true)
 
